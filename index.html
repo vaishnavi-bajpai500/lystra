@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LYSTRA — A prettier way to plan what you buy.</title>
+<meta name="description" content="Lystra is a beautiful monthly shopping planner for thinking before you buy.">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+<header class="nav"><div class="logo">LYSTRA</div><div class="nav-note">think twice · shop better</div></header>
+<main id="landing">
+<section class="hero">
+<div class="hero-copy"><div class="kicker">A monthly shopping ritual</div><h1>BUY<br>BEFORE.</h1><p>A prettier way to think before you shop. Save the things you want, see what they cost, and give your money a little more intention.</p><button class="cta" onclick="start()">Start my list <span>↗</span></button><div class="hero-list"><span class="scribble">no spreadsheets. promise.</span></div></div>
+<div class="mock"><div class="mock-top"><div><div class="mock-label">shopping for</div><div class="mock-month">October</div></div><div class="mock-label">₹ 5,000 budget</div></div><div class="mock-item"><span>everyday sneakers</span><span>₹2,499</span></div><div class="mock-item"><span>silver hoops</span><span>₹799</span></div><div class="mock-item"><span>hair serum</span><span>₹649</span></div><div class="mock-item"><span>tote bag</span><span>₹1,299</span></div><div class="mock-total"><span>planned</span><span>₹5,246</span></div></div>
+</section>
+</main>
+<section id="dashboard">
+<div class="dash-head"><div><div class="kicker">my shopping month</div><div class="month-title" id="monthTitle">October 2026</div></div><div class="month-control"><button onclick="shiftMonth(-1)">←</button><input id="monthInput" value="October 2026" onchange="setMonth(this.value)"><button onclick="shiftMonth(1)">→</button></div></div>
+<div class="budget"><div class="stat"><small>Monthly budget</small><strong id="budgetVal">₹5,000</strong></div><div class="stat"><small>Planned</small><strong id="plannedVal">₹0</strong><div class="bar"><i id="budgetBar"></i></div></div><div class="stat"><small>Left</small><strong id="leftVal">₹5,000</strong></div></div>
+<div class="tools"><div class="filters"><button class="filter active" data-f="all">All</button><button class="filter" data-f="Essential">Need</button><button class="filter" data-f="Want">Want</button><button class="filter" data-f="Maybe">Maybe</button><button class="filter" data-f="bought">Bought</button></div><button class="add" onclick="openModal()">+ Add something</button></div>
+<div id="grid" class="grid"></div>
+<div class="reflection"><h2>October, in retrospect.</h2><p id="reflectionText">You haven't bought anything yet. That's okay. This is the part where wanting something and actually buying it become two different things.</p></div>
+</section>
+<footer class="footer"><span>LYSTRA</span><span>a tiny shopping ritual</span></footer>
+<div class="overlay" id="overlay"><form class="modal" onsubmit="addItem(event)"><h2>Add something.</h2><div class="field"><label>What are you thinking of buying?</label><input id="name" required placeholder="new everyday bag..."></div><div class="field"><label>Price</label><input id="price" type="number" min="0" step="1" required placeholder="1299"></div><div class="field"><label>Product link</label><input id="url" type="url" placeholder="https://..."></div><div class="field"><label>Category</label><select id="category"><option>Fashion</option><option>Beauty</option><option>Personal Care</option><option>College</option><option>Tech</option><option>Lifestyle</option><option>Other</option></select></div><div class="field"><label>How important?</label><select id="priority"><option>Essential</option><option>Want</option><option>Maybe</option></select></div><div class="field"><label>Why do I want this? <span style="opacity:.55">optional</span></label><textarea id="why" placeholder="my current one is falling apart..."></textarea></div><div class="modal-actions"><button type="button" class="cancel" onclick="closeModal()">Cancel</button><button class="save">Add to my list →</button></div></form></div>
+</div>
+
+<script src="app.js"></script>
+</body></html>
