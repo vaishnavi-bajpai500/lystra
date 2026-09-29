@@ -3,30 +3,1542 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LYSTRA — A prettier way to plan what you buy.</title>
-<meta name="description" content="Lystra is a beautiful monthly shopping planner for thinking before you buy.">
+<title>BUY BEFORE — Think twice. Shop better.</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f3efe7;
+  --paper:#fbf9f4;
+  --ink:#171614;
+  --muted:#746f67;
+  --line:#d8d1c5;
+  --accent:#7b1f32;
+  --accent2:#d8c1a8;
+  --shadow:0 20px 60px rgba(25,20,14,.10)
+}
+
+*{
+  box-sizing:border-box
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--ink)
+}
+
+body{
+  background:var(--bg)
+}
+
+button,input,select,textarea{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+#app{
+  min-height:100vh;
+  background:var(--bg);
+  overflow:hidden
+}
+
+.nav{
+  height:76px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 5vw;
+  letter-spacing:.02em
+}
+
+.logo{
+  font-family:Georgia,serif;
+  font-size:22px;
+  letter-spacing:.14em
+}
+
+.nav-note{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  color:var(--muted)
+}
+
+.hero{
+  padding:8vh 5vw 5vh;
+  max-width:1250px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:7vw;
+  align-items:end
+}
+
+.kicker{
+  text-transform:uppercase;
+  letter-spacing:.25em;
+  font-size:11px;
+  color:var(--accent);
+  font-weight:700
+}
+
+.hero h1{
+  font:normal clamp(72px,11vw,165px)/.78 Georgia,serif;
+  margin:22px 0 30px;
+  letter-spacing:-.065em
+}
+
+.hero p{
+  font:normal clamp(20px,2.1vw,30px)/1.18 Georgia,serif;
+  max-width:580px;
+  margin:0;
+  color:#39352f
+}
+
+.hero-copy{
+  align-self:center
+}
+
+.hero-list{
+  border-top:1px solid var(--line);
+  margin-top:28px;
+  padding-top:20px
+}
+
+.scribble{
+  font-family:cursive;
+  color:var(--accent);
+  font-size:20px;
+  transform:rotate(-3deg);
+  display:inline-block
+}
+
+.mock{
+  background:var(--paper);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  padding:26px;
+  transform:rotate(1.3deg)
+}
+
+.mock-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  border-bottom:1px solid var(--line);
+  padding-bottom:18px
+}
+
+.mock-month{
+  font:normal 44px/1 Georgia,serif
+}
+
+.mock-label{
+  text-transform:uppercase;
+  font-size:9px;
+  letter-spacing:.18em;
+  color:var(--muted)
+}
+
+.mock-item{
+  display:flex;
+  justify-content:space-between;
+  padding:17px 0;
+  border-bottom:1px solid var(--line);
+  font-size:14px
+}
+
+.mock-item span:last-child{
+  font-family:Georgia,serif
+}
+
+.mock-total{
+  padding-top:20px;
+  display:flex;
+  justify-content:space-between;
+  font-family:Georgia,serif;
+  font-size:20px
+}
+
+.cta{
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  background:var(--ink);
+  color:var(--paper);
+  border:0;
+  padding:15px 21px;
+  margin-top:34px;
+  text-transform:uppercase;
+  font-size:10px;
+  letter-spacing:.18em
+}
+
+.cta:hover{
+  transform:translateY(-2px);
+  background:var(--accent)
+}
+
+#dashboard{
+  display:none;
+  padding:36px 5vw 80px;
+  max-width:1400px;
+  margin:auto
+}
+
+.dash-head{
+  display:flex;
+  justify-content:space-between;
+  gap:30px;
+  align-items:end;
+  border-bottom:1px solid var(--line);
+  padding-bottom:28px
+}
+
+.month-title{
+  font:normal clamp(46px,6vw,82px)/.9 Georgia,serif;
+  letter-spacing:-.05em;
+  margin:10px 0
+}
+
+.month-control{
+  display:flex;
+  align-items:center;
+  gap:9px
+}
+
+.month-control button,
+.month-control input{
+  background:transparent;
+  border:1px solid var(--line);
+  padding:10px 13px
+}
+
+.month-control input{
+  width:125px
+}
+
+.budget{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin:22px 0 34px
+}
+
+.stat{
+  border-top:2px solid var(--ink);
+  padding:14px 0
+}
+
+.stat small{
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  color:var(--muted);
+  font-size:9px
+}
+
+.stat strong{
+  display:block;
+  font:normal 31px Georgia,serif;
+  margin-top:6px
+}
+
+#budgetInput{
+  width:100%;
+  margin-top:10px;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+  padding:8px 0;
+  outline:none
+}
+
+.bar{
+  height:5px;
+  background:var(--line);
+  margin-top:10px
+}
+
+.bar i{
+  display:block;
+  height:100%;
+  background:var(--accent);
+  width:0;
+  transition:width .5s
+}
+
+.tools{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 0
+}
+
+.filters{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap
+}
+
+.filter{
+  border:1px solid var(--line);
+  background:transparent;
+  padding:9px 13px;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.13em
+}
+
+.filter.active{
+  background:var(--ink);
+  color:var(--paper)
+}
+
+.add{
+  border:1px solid var(--ink);
+  background:var(--ink);
+  color:var(--paper);
+  padding:11px 17px;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  font-size:10px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px
+}
+
+.card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  min-height:210px;
+  padding:20px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:.25s
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow)
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  gap:15px
+}
+
+.tag{
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  color:var(--accent)
+}
+
+.card h3{
+  font:normal 28px/1.02 Georgia,serif;
+  margin:35px 0 8px
+}
+
+.price{
+  font:normal 24px Georgia,serif
+}
+
+.why{
+  font:13px/1.4 Georgia,serif;
+  color:var(--muted);
+  margin-top:8px
+}
+
+.card-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:24px
+}
+
+.link{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  color:var(--ink);
+  text-decoration:none
+}
+
+.bought{
+  border:0;
+  background:transparent;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+  font-size:9px;
+  color:var(--accent)
+}
+
+.empty{
+  border:1px dashed var(--line);
+  padding:70px 30px;
+  text-align:center;
+  grid-column:1/-1;
+  color:var(--muted);
+  font-family:Georgia,serif;
+  font-size:24px
+}
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(20,18,15,.35);
+  backdrop-filter:blur(8px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:4
+}
+
+.modal{
+  width:min(520px,100%);
+  background:var(--paper);
+  padding:30px;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow)
+}
+
+.modal h2{
+  font:normal 42px Georgia,serif;
+  margin:0 0 25px
+}
+
+.field{
+  margin:15px 0
+}
+
+.field label{
+  display:block;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:9px;
+  color:var(--muted);
+  margin-bottom:7px
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+  padding:10px 0;
+  outline:0
+}
+
+.field textarea{
+  resize:vertical;
+  min-height:55px
+}
+
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+  margin-top:24px
+}
+
+.cancel{
+  background:transparent;
+  border:1px solid var(--line);
+  padding:11px 15px
+}
+
+.save{
+  background:var(--ink);
+  color:var(--paper);
+  border:0;
+  padding:11px 18px
+}
+
+.reflection{
+  margin-top:70px;
+  padding-top:25px;
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  gap:30px
+}
+
+.reflection h2{
+  font:normal 42px Georgia,serif;
+  margin:0
+}
+
+.reflection p{
+  font:normal 24px/1.2 Georgia,serif;
+  margin:0;
+  max-width:650px
+}
+
+.footer{
+  padding:25px 5vw;
+  border-top:1px solid var(--line);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  color:var(--muted);
+  display:flex;
+  justify-content:space-between
+}
+
+@media(max-width:850px){
+  .hero{
+    grid-template-columns:1fr;
+    padding-top:55px
+  }
+
+  .hero h1{
+    font-size:88px
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .budget{
+    grid-template-columns:1fr 1fr
+  }
+
+  .reflection{
+    grid-template-columns:1fr
+  }
+
+  .dash-head{
+    align-items:start;
+    flex-direction:column
+  }
+
+  .nav-note{
+    display:none
+  }
+}
+
+@media(max-width:560px){
+  .hero{
+    padding-left:24px;
+    padding-right:24px
+  }
+
+  .nav{
+    padding:0 24px
+  }
+
+  .hero h1{
+    font-size:70px
+  }
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .budget{
+    grid-template-columns:1fr
+  }
+
+  .tools{
+    align-items:flex-start;
+    gap:15px;
+    flex-direction:column
+  }
+
+  .mock{
+    transform:none
+  }
+
+  .hero{
+    gap:40px
+  }
+
+  #dashboard{
+    padding-left:24px;
+    padding-right:24px
+  }
+}
+
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#151311;
+    --paper:#1d1b18;
+    --ink:#f2eee6;
+    --muted:#aaa298;
+    --line:#3a3630;
+    --accent:#d58a9c;
+    --accent2:#5d4d40;
+    --shadow:0 20px 70px rgba(0,0,0,.35)
+  }
+}
+</style>
 </head>
+
 <body>
+
 <div id="app">
-<header class="nav"><div class="logo">LYSTRA</div><div class="nav-note">think twice · shop better</div></header>
+
+<header class="nav">
+  <div class="logo">BUY BEFORE</div>
+  <div class="nav-note">think twice · shop better</div>
+</header>
+
 <main id="landing">
+
 <section class="hero">
-<div class="hero-copy"><div class="kicker">A monthly shopping ritual</div><h1>BUY<br>BEFORE.</h1><p>A prettier way to think before you shop. Save the things you want, see what they cost, and give your money a little more intention.</p><button class="cta" onclick="start()">Start my list <span>↗</span></button><div class="hero-list"><span class="scribble">no spreadsheets. promise.</span></div></div>
-<div class="mock"><div class="mock-top"><div><div class="mock-label">shopping for</div><div class="mock-month">October</div></div><div class="mock-label">₹ 5,000 budget</div></div><div class="mock-item"><span>everyday sneakers</span><span>₹2,499</span></div><div class="mock-item"><span>silver hoops</span><span>₹799</span></div><div class="mock-item"><span>hair serum</span><span>₹649</span></div><div class="mock-item"><span>tote bag</span><span>₹1,299</span></div><div class="mock-total"><span>planned</span><span>₹5,246</span></div></div>
-</section>
-</main>
-<section id="dashboard">
-<div class="dash-head"><div><div class="kicker">my shopping month</div><div class="month-title" id="monthTitle">October 2026</div></div><div class="month-control"><button onclick="shiftMonth(-1)">←</button><input id="monthInput" value="October 2026" onchange="setMonth(this.value)"><button onclick="shiftMonth(1)">→</button></div></div>
-<div class="budget"><div class="stat"><small>Monthly budget</small><strong id="budgetVal">₹5,000</strong></div><div class="stat"><small>Planned</small><strong id="plannedVal">₹0</strong><div class="bar"><i id="budgetBar"></i></div></div><div class="stat"><small>Left</small><strong id="leftVal">₹5,000</strong></div></div>
-<div class="tools"><div class="filters"><button class="filter active" data-f="all">All</button><button class="filter" data-f="Essential">Need</button><button class="filter" data-f="Want">Want</button><button class="filter" data-f="Maybe">Maybe</button><button class="filter" data-f="bought">Bought</button></div><button class="add" onclick="openModal()">+ Add something</button></div>
-<div id="grid" class="grid"></div>
-<div class="reflection"><h2>October, in retrospect.</h2><p id="reflectionText">You haven't bought anything yet. That's okay. This is the part where wanting something and actually buying it become two different things.</p></div>
-</section>
-<footer class="footer"><span>LYSTRA</span><span>a tiny shopping ritual</span></footer>
-<div class="overlay" id="overlay"><form class="modal" onsubmit="addItem(event)"><h2>Add something.</h2><div class="field"><label>What are you thinking of buying?</label><input id="name" required placeholder="new everyday bag..."></div><div class="field"><label>Price</label><input id="price" type="number" min="0" step="1" required placeholder="1299"></div><div class="field"><label>Product link</label><input id="url" type="url" placeholder="https://..."></div><div class="field"><label>Category</label><select id="category"><option>Fashion</option><option>Beauty</option><option>Personal Care</option><option>College</option><option>Tech</option><option>Lifestyle</option><option>Other</option></select></div><div class="field"><label>How important?</label><select id="priority"><option>Essential</option><option>Want</option><option>Maybe</option></select></div><div class="field"><label>Why do I want this? <span style="opacity:.55">optional</span></label><textarea id="why" placeholder="my current one is falling apart..."></textarea></div><div class="modal-actions"><button type="button" class="cancel" onclick="closeModal()">Cancel</button><button class="save">Add to my list →</button></div></form></div>
+
+<div class="hero-copy">
+
+<div class="kicker">A monthly shopping ritual</div>
+
+<h1>
+BUY<br>
+BEFORE.
+</h1>
+
+<p>
+A prettier way to think before you shop.
+Save the things you want, see what they cost,
+and give your money a little more intention.
+</p>
+
+<button class="cta" onclick="start()">
+Start my list <span>↗</span>
+</button>
+
+<div class="hero-list">
+<span class="scribble">no spreadsheets. promise.</span>
 </div>
 
-<script src="app.js"></script>
-</body></html>
+</div>
+
+<div class="mock">
+
+<div class="mock-top">
+
+<div>
+<div class="mock-label">shopping for</div>
+<div class="mock-month">October</div>
+</div>
+
+<div class="mock-label">₹ 5,000 budget</div>
+
+</div>
+
+<div class="mock-item">
+<span>everyday sneakers</span>
+<span>₹2,499</span>
+</div>
+
+<div class="mock-item">
+<span>silver hoops</span>
+<span>₹799</span>
+</div>
+
+<div class="mock-item">
+<span>hair serum</span>
+<span>₹649</span>
+</div>
+
+<div class="mock-item">
+<span>tote bag</span>
+<span>₹1,299</span>
+</div>
+
+<div class="mock-total">
+<span>planned</span>
+<span>₹5,246</span>
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<section id="dashboard">
+
+<div class="dash-head">
+
+<div>
+
+<div class="kicker">my shopping month</div>
+
+<div class="month-title" id="monthTitle">
+October 2026
+</div>
+
+</div>
+
+<div class="month-control">
+
+<button onclick="shiftMonth(-1)">←</button>
+
+<input
+id="monthInput"
+value="October 2026"
+onchange="setMonth(this.value)"
+>
+
+<button onclick="shiftMonth(1)">→</button>
+
+</div>
+
+</div>
+
+
+<div class="budget">
+
+<div class="stat">
+
+<small>Monthly budget</small>
+
+<strong id="budgetVal">₹0</strong>
+
+<input
+id="budgetInput"
+type="number"
+min="0"
+step="1"
+placeholder="Enter budget"
+onchange="setBudget(this.value)"
+>
+
+</div>
+
+
+<div class="stat">
+
+<small>Planned</small>
+
+<strong id="plannedVal">₹0</strong>
+
+<div class="bar">
+<i id="budgetBar"></i>
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<small>Left</small>
+
+<strong id="leftVal">₹0</strong>
+
+</div>
+
+</div>
+
+
+<div class="tools">
+
+<div class="filters">
+
+<button class="filter active" data-f="all">
+All
+</button>
+
+<button class="filter" data-f="Essential">
+Need
+</button>
+
+<button class="filter" data-f="Want">
+Want
+</button>
+
+<button class="filter" data-f="Maybe">
+Maybe
+</button>
+
+<button class="filter" data-f="bought">
+Bought
+</button>
+
+</div>
+
+<button class="add" onclick="openModal()">
++ Add something
+</button>
+
+</div>
+
+
+<div id="grid" class="grid"></div>
+
+
+<div class="reflection">
+
+<h2 id="reflectionTitle">
+October, in retrospect.
+</h2>
+
+<p id="reflectionText">
+Your list is empty. Start with one thing you are genuinely considering.
+</p>
+
+</div>
+
+</section>
+
+
+<footer class="footer">
+
+<span>BUY BEFORE</span>
+
+<span>a tiny shopping ritual</span>
+
+</footer>
+
+
+<div class="overlay" id="overlay">
+
+<form class="modal" onsubmit="addItem(event)">
+
+<h2>Add something.</h2>
+
+
+<div class="field">
+
+<label>
+What are you thinking of buying?
+</label>
+
+<input
+id="name"
+required
+placeholder="new everyday bag..."
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Price</label>
+
+<input
+id="price"
+type="number"
+min="0"
+step="1"
+required
+placeholder="1299"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Product link</label>
+
+<input
+id="url"
+type="url"
+placeholder="https://..."
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Category</label>
+
+<select id="category">
+
+<option>Fashion</option>
+<option>Beauty</option>
+<option>Personal Care</option>
+<option>College</option>
+<option>Tech</option>
+<option>Lifestyle</option>
+<option>Other</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>How important?</label>
+
+<select id="priority">
+
+<option>Essential</option>
+<option>Want</option>
+<option>Maybe</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Why do I want this?
+<span style="opacity:.55">optional</span>
+</label>
+
+<textarea
+id="why"
+placeholder="my current one is falling apart..."
+></textarea>
+
+</div>
+
+
+<div class="modal-actions">
+
+<button
+type="button"
+class="cancel"
+onclick="closeModal()"
+>
+Cancel
+</button>
+
+<button class="save">
+Add to my list →
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ================================
+   MONTHLY DATA
+================================ */
+
+const state = {
+  month: 'October 2026',
+  filter: 'all',
+
+  months: {
+    'October 2026': {
+      budget: 0,
+      items: []
+    }
+  }
+};
+
+
+/* ================================
+   BASIC HELPERS
+================================ */
+
+const $ = id => document.getElementById(id);
+
+const money = n =>
+  '₹' + Number(n).toLocaleString('en-IN');
+
+
+/* ================================
+   CURRENT MONTH
+================================ */
+
+function currentMonth() {
+
+  if (!state.months[state.month]) {
+
+    state.months[state.month] = {
+      budget: 0,
+      items: []
+    };
+
+  }
+
+  return state.months[state.month];
+}
+
+
+/* ================================
+   SAVE DATA
+================================ */
+
+function saveData() {
+
+  localStorage.setItem(
+    'lystraData',
+    JSON.stringify({
+      month: state.month,
+      months: state.months
+    })
+  );
+
+}
+
+
+/* ================================
+   LOAD DATA
+================================ */
+
+function loadData() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem('lystraData')
+      );
+
+    if (saved && saved.months) {
+
+      state.month =
+        saved.month || state.month;
+
+      state.months =
+        saved.months;
+
+    }
+
+  } catch(e) {}
+
+}
+
+loadData();
+
+
+/* ================================
+   START DASHBOARD
+================================ */
+
+function start() {
+
+  $('landing').style.display = 'none';
+
+  $('dashboard').style.display = 'block';
+
+  render();
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
+
+}
+
+
+/* ================================
+   RENDER DASHBOARD
+================================ */
+
+function render() {
+
+  const m = currentMonth();
+
+  const items = m.items;
+
+
+  $('monthTitle').textContent =
+    state.month;
+
+  $('monthInput').value =
+    state.month;
+
+
+  $('budgetVal').textContent =
+    money(m.budget);
+
+
+  /*
+     Dynamic reflection heading
+     October → October, in retrospect.
+     November → November, in retrospect.
+  */
+
+  $('reflectionTitle').textContent =
+    state.month.split(' ')[0] +
+    ', in retrospect.';
+
+
+  const planned =
+    items
+      .filter(x => x.status !== 'bought')
+      .reduce(
+        (s,x) => s + x.price,
+        0
+      );
+
+
+  const spent =
+    items
+      .filter(x => x.status === 'bought')
+      .reduce(
+        (s,x) => s + x.price,
+        0
+      );
+
+
+  const left =
+    m.budget -
+    planned -
+    spent;
+
+
+  $('plannedVal').textContent =
+    money(planned);
+
+  $('leftVal').textContent =
+    money(left);
+
+
+  $('budgetBar').style.width =
+    m.budget
+      ? Math.min(
+          100,
+          Math.max(
+            0,
+            ((planned + spent) / m.budget) * 100
+          )
+        ) + '%'
+      : '0%';
+
+
+  /*
+     FILTER ITEMS
+  */
+
+  const filtered =
+    items.filter(x => {
+
+      if (state.filter === 'all')
+        return true;
+
+      if (state.filter === 'bought')
+        return x.status === 'bought';
+
+      return x.priority === state.filter;
+
+    });
+
+
+  const grid =
+    $('grid');
+
+  grid.innerHTML = '';
+
+
+  /*
+     EMPTY STATE
+  */
+
+  if (!filtered.length) {
+
+    grid.innerHTML = `
+      <div class="empty">
+        Nothing here yet.
+        <br>
+        <span style="font-size:14px">
+          Maybe that is the point.
+        </span>
+      </div>
+    `;
+
+  }
+
+
+  /*
+     PRODUCT CARDS
+  */
+
+  filtered.forEach(x => {
+
+    const real =
+      items.indexOf(x);
+
+    const c =
+      document.createElement('article');
+
+    c.className = 'card';
+
+
+    c.innerHTML = `
+
+      <div>
+
+        <div class="card-top">
+
+          <span class="tag">
+            ${x.category} · ${x.priority}
+          </span>
+
+          <span style="font-size:16px">
+            ${x.status === 'bought' ? '✓' : ''}
+          </span>
+
+        </div>
+
+
+        <h3>
+          ${esc(x.name)}
+        </h3>
+
+
+        <div class="price">
+          ${money(x.price)}
+        </div>
+
+
+        ${
+          x.why
+            ? `
+              <div class="why">
+                “${esc(x.why)}”
+              </div>
+            `
+            : ''
+        }
+
+      </div>
+
+
+      <div class="card-bottom">
+
+        ${
+          x.url
+            ? `
+              <a
+                class="link"
+                target="_blank"
+                rel="noopener"
+                href="${esc(x.url)}"
+              >
+                View product ↗
+              </a>
+            `
+            : `
+              <span
+                class="link"
+                style="opacity:.35"
+              >
+                no link yet
+              </span>
+            `
+        }
+
+
+        <button
+          class="bought"
+          onclick="toggleBought(${real})"
+        >
+
+          ${
+            x.status === 'bought'
+              ? 'Mark wishlist'
+              : 'Mark bought ✓'
+          }
+
+        </button>
+
+      </div>
+
+    `;
+
+
+    grid.appendChild(c);
+
+  });
+
+
+  /*
+     REFLECTION TEXT
+  */
+
+  $('reflectionText').textContent =
+    items.length
+
+      ? `You have ${
+          items.filter(
+            x => x.status === 'bought'
+          ).length
+        } bought and ${
+          items.filter(
+            x => x.status !== 'bought'
+          ).length
+        } still on the list. You planned ${
+          money(planned)
+        } before buying — now you get to decide what deserves a place in your month.`
+
+      : 'Your list is empty. Start with one thing you are genuinely considering.';
+
+}
+
+
+/* ================================
+   ESCAPE TEXT
+================================ */
+
+function esc(s) {
+
+  return String(s).replace(
+    /[&<>"']/g,
+    m => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[m])
+  );
+
+}
+
+
+/* ================================
+   SET BUDGET
+================================ */
+
+function setBudget(value) {
+
+  const n =
+    Number(value);
+
+
+  if (
+    Number.isFinite(n) &&
+    n >= 0
+  ) {
+
+    currentMonth().budget =
+      n;
+
+    saveData();
+
+    render();
+
+  }
+
+}
+
+
+/* ================================
+   MODAL
+================================ */
+
+function openModal() {
+
+  $('overlay').style.display =
+    'flex';
+
+  $('name').focus();
+
+}
+
+
+function closeModal() {
+
+  $('overlay').style.display =
+    'none';
+
+}
+
+
+/* ================================
+   ADD ITEM
+================================ */
+
+function addItem(e) {
+
+  e.preventDefault();
+
+
+  currentMonth().items.unshift({
+
+    name:
+      $('name').value,
+
+    price:
+      +$('price').value,
+
+    url:
+      $('url').value,
+
+    category:
+      $('category').value,
+
+    priority:
+      $('priority').value,
+
+    status:
+      'wishlist',
+
+    why:
+      $('why').value
+
+  });
+
+
+  e.target.reset();
+
+  closeModal();
+
+  saveData();
+
+  render();
+
+}
+
+
+/* ================================
+   BOUGHT / WISHLIST
+================================ */
+
+function toggleBought(i) {
+
+  const items =
+    currentMonth().items;
+
+
+  items[i].status =
+    items[i].status === 'bought'
+      ? 'wishlist'
+      : 'bought';
+
+
+  saveData();
+
+  render();
+
+}
+
+
+/* ================================
+   FILTERS
+================================ */
+
+document
+  .querySelectorAll('.filter')
+  .forEach(b => {
+
+    b.addEventListener(
+      'click',
+      () => {
+
+        document
+          .querySelectorAll('.filter')
+          .forEach(x =>
+            x.classList.remove('active')
+          );
+
+
+        b.classList.add('active');
+
+
+        state.filter =
+          b.dataset.f;
+
+
+        render();
+
+      }
+    );
+
+  });
+
+
+/* ================================
+   CHANGE MONTH
+================================ */
+
+function setMonth(v) {
+
+  state.month =
+    v || state.month;
+
+
+  currentMonth();
+
+  saveData();
+
+  render();
+
+}
+
+
+/* ================================
+   PREVIOUS / NEXT MONTH
+================================ */
+
+function shiftMonth(delta) {
+
+  const d =
+    new Date(
+      state.month + ' 1'
+    );
+
+
+  d.setMonth(
+    d.getMonth() + delta
+  );
+
+
+  state.month =
+    d.toLocaleString(
+      'en-US',
+      {
+        month:'long',
+        year:'numeric'
+      }
+    );
+
+
+  currentMonth();
+
+  saveData();
+
+  render();
+
+}
+
+
+/* ================================
+   CLOSE MODAL BY CLICKING OUTSIDE
+================================ */
+
+$('overlay').addEventListener(
+  'click',
+  e => {
+
+    if (
+      e.target.id === 'overlay'
+    ) {
+
+      closeModal();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
